@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Destination Planner</title>
+	<script src="http://d3js.org/d3.v3.min.js"></script>
+	<script src="http://d3js.org/topojson.v1.min.js"></script>
+	<script src="http://datamaps.github.io/scripts/datamaps.world.min.js?v=1"></script>
+	<script src="data/data.js"></script>
+	<script src="js/d3.ez.js"></script>
+    <script> d3.eesur = {};  </script>
+    <script src="js/d3.layout.cloud.js"></script>
+	<link rel="stylesheet" type="text/css" href="http://rawgit.com/jamesleesaunders/d3.ez/master/d3.ez.css" />
+	<link rel="stylesheet" href="styles/main.css">
+	<link rel="stylesheet" type="text/css" href="styles/base.css" />
+    <link rel="stylesheet" type="text/css" href="styles/project.css" />
+    <script src="js/script.js"></script>
+    <script src="js/d3.legend.js"></script>
+		<script src="js/crossfilter.v1.min.js"></script>
+		<script src="js/drawStackChart.js"></script>
+		<script src="js/drawCrossfitter.js"></script>
+		<script src="js/drawMap.js"></script>
+
+
+	<style>
+
+	body {
+  background: url(gray.jpg);
+  background-size: auto;
+    background-repeat: no-repeat;
+}
+	</style>
+
+</head>
+
+<style>
+    .legend rect {
+        fill:white;
+        stroke:black;
+        opacity:0.8;}
+
+</style>
+
+<body>
+
+   <div id="head">
+   <h1> Destination Planner </h1>
+ </div>
+    <div id="step1"> 1) What are you interested in: </div>
+    <div id="interest" >
+    <input class="radio" type="radio" name="radio_b" onClick="reLoadData()" value="b" checked="true"/>Beaches
+    <input class="radio" type="radio" name="radio_b" onClick="reLoadData()" value="d" />Desserts
+    <input class="radio" type="radio" name="radio_b" onClick="reLoadData()" value="a" />Architecture
+    <input class="radio" type="radio" name="radio_b" onClick="reLoadData()" value="w" />Wildlife
+    </div>
+
+
+
+	<div id="word-cloud"></div>
+	<div id="step2"> 2) Compare the countries on Healthcare, Safety, Transit, Affordability, overall <br/> rating and geographic distance: </div>
+  <div id="chartholder"></div>
+	<div id="container1"></div>
+  <div id="step3"> 3) Here are the average flight prices and whether conditions throughout year: </div>
+	<div id="legend-line-chart"></div>
+	<div class="chart"></div>
+
+	<div id="charts">
+	  <div id="hour-chart" class="chart1">
+	    <div class="title">Time of Day</div>
+	  </div>
+	  <div id="price-chart" class="chart1">
+	    <div class="title">Price (CAD)</div>
+	  </div>
+	  <div id="stops-chart" class="chart1">
+	    <div class="title">Stops</div>
+	  </div>
+	  <div id="date-chart" class="chart1">
+	    <div class="title">Date</div>
+	  </div>
+	</div>
+ <div id="step4"> 4) Check how many flights are available based on your selections: </div>
+ <!--
+	<div id="form">
+		<label><input type="radio" name="mode" value="bycount" checked>Raw Count</label>
+		<label><input type="radio" name="mode" value="bypercent">Percent of Segments</label>
+	</div>
+-->
+	<div id="stackChart"></div>
+	<!--<aside id="totals"><span id="active">-</span> of <span id="total">-</span> flights selected.</aside>-->
+
+    <script>
+
+        var svg = d3.select('#legend-line-chart').append("svg")
+                .attr("width", 300)
+                .attr("height", 100)
+                .append("g");
+                //.attr("transform", "translate(100,435)");
+
+        //var rect = svg.append("rect")
+        //        .attr("width", 200)
+        //        .attr("height", 40)
+        //        .attr("fill", "none")
+        //        .attr("stroke", "white");
+
+        var circle = svg.append("rect")
+                //.attr("cx", 140)
+                //.attr("cy", 20)
+                //.attr("r", 10)
+								.attr("x", 125)
+								.attr("y", 52)
+								.attr("width", 18)
+								.attr("height", 18)
+                .attr("fill", "#b3b3cc")
+
+        var text1 = svg.append("text")
+                .attr("x", 155)
+                .attr("y", 25)
+                .text("Warm")
+                .attr("fill", "black")
+
+        var circle2 = svg.append("rect")
+                //.attr("cx", 140)
+                //.attr("cy", 40)
+                //.attr("r", 10)
+								.attr("x", 125)
+								.attr("y", 32)
+								.attr("width", 18)
+								.attr("height", 18)
+                .attr("fill", "#99ccff")
+
+        var text2 = svg.append("text")
+                .attr("x", 155)
+                .attr("y", 45)
+                .text("Cold")
+                .attr("fill", "black")
+
+        var circle3 = svg.append("rect")
+				.attr("x", 125)
+				.attr("y", 12)
+				.attr("width", 18)
+				.attr("height", 18)
+                //.attr("cx", 140)
+                //.attr("cy", 60)
+                //.attr("r", 10)
+                .attr("fill", "#ffcc66")
+
+        var text3 = svg.append("text")
+                .attr("x", 155)
+                .attr("y", 65)
+                .text("Rainy")
+                .attr("fill", "black")
+
+
+    </script>
+
+
+
+	<!--
+	<div id="step3"> 3) Select a country to see prices and weather throughout the year: </div>
+	<select id="selectNumber">
+    <option>Choose a country</option>
+	</select>
+
+    <div id="heatmap"></div>
+    <span id="info">info</span>
+    -->
+
+	<script type="text/javascript">
+
+
+      drawMap();
+//noConflict();
+	    reLoadData();
+			countryFromWc="Mauritius";
+			drawLineChart(countryFromWc);
+			drawCrossfitter(countryFromWc);
+	  //  d3.selectAll('.radio').on('change', function(){
+		//		alert('yo');
+	  //  reLoadData();
+	  //  });
+
+
+		function reLoadData(){
+//alert('here')
+		d3.csv("data/Holiday_Interests.csv", function(countries)
+        {
+        var category=d3.select('input[name="radio_b"]:checked').node().value;
+        var words={};
+            var prices={};
+        //countries is an array of json objects containing the data in from the csv
+        countryList = countries.map(function(d)
+        {
+            //each d is one line of the csv file represented as a json object
+            if(category == 'b'){
+              if(d.Beaches == 'B'){
+                words[d.Country]=d.Rating
+                  prices[d.Country]=d.Price
+
+                //alert(words[d.Country]);
+                return d.Country ;
+                }else{
+                return 'N/A'
+                }
+            }else if(category == 'd'){
+
+              if(d.Desserts == 'D'){
+                words[d.Country]=d.Rating
+                prices[d.Country]=d.Price
+                return d.Country ;
+                }else{
+                return 'N/A'
+                }
+            }else if(category == 'a'){
+              if(d.Architecture == 'A'){
+                words[d.Country]=d.Rating
+                  prices[d.Country]=d.Price
+                return d.Country ;
+                }else{
+                return 'N/A'
+                }
+            }else {
+            if(d.Wildlife == 'W'){
+                words[d.Country]=d.Rating
+                prices[d.Country]=d.Price
+                return d.Country ;
+                }else{
+                return 'N/A'
+                }
+            }
+
+
+
+        });
+        //alert(Object.keys(words).length);
+        var dynamicData = [
+					{
+							"key": "Transit",
+							"values": []
+					},
+					{
+							"key": "Safety",
+							"values": []
+					},
+					{
+							"key": "Healthcare",
+							"values": []
+					},
+					{
+							"key": "Affordability",
+							"values": []
+					},
+								{
+		                "key": "Overall Rating",
+		                "values": []
+		            }
+
+		        ];
+					countryDict={};
+					count=0;
+		    for (var i=0; i< 5; i++){
+//alert(data[i].values)
+		    var countryRating=cloudData[i].values
+
+		    for (var j = 0; j < countryRating.length; j++) {
+
+			    	if(countryList.indexOf(countryRating[j].key) > -1 ){
+			    	dynamicData[i].values.push(countryRating[j])
+						if(i==0){
+						countryDict[countryRating[j].key]=count;
+						count++;
+					}
+			    	}
+
+                }
+
+                }
+
+        var myChart = d3.ez.circularHeatChart()
+			.width(450)
+			.height(350)
+			.innerRadius(40);
+
+		// Add to page
+		d3.select('#chartholder')
+			.datum(dynamicData)
+			.call(myChart);
+
+//wordcloud
+
+        drawWordCloud(20,words,prices);
+function drawWordCloud(rescale,words,prices)
+        {
+					wordSize={1:6,2:12,3:16,4:21,5:26}
+            width = 450;
+            height = 350;
+            fontFamily = "Open Sans";
+            var fill = d3.scale.category20();
+            d3.layout.cloud().size([width, height])
+                .words(Object.keys(words).map(function(d)
+                {
+                    return {
+                        text: d,
+                        size: wordSize[words[d]] + 10,
+                        price: prices[d]
+                    };
+                }))
+                .padding(1)
+                .rotate(function()
+                {
+                    // return ~~(Math.random() * 2) * 90;
+                    return 0;
+                })
+                .font(fontFamily)
+                .fontSize(function(d)
+                {
+                    return d.size;
+                })
+                .on("end", draw)
+                .start();
+
+            function draw(words)
+            {  d3.select('#word-cloud').select("svg").remove();
+                d3.select("#word-cloud").append("svg")
+                    .attr("width", width)
+                    .attr("height", height)
+                    .append("g")
+                    .attr("transform", "translate(" + width / 2 + ", " + height / 2 + ")")
+                    .selectAll("text")
+                    .data(words)
+                    .enter().append("text")
+                    .style("font-size", function(d)
+                    {
+                        return d.size + "px";
+                    })
+                    .style("font-family", fontFamily)
+                    .style("fill", function (d,i) {
+											if(d.text == 'Mauritius')
+													return "#595959";
+                        else if (d.price < 40)
+                            return "#00b300";
+                        else
+                            return "#bfbfbf";
+
+                    })
+                    //.style("fill", function(d, i)
+                    //{
+                    //    return fill(i);
+                    //})
+                    .attr("text-anchor", "middle")
+                    .attr("transform", function(d)
+                    {
+                        return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+                    })
+                    .text(function(d)
+                    {
+                        return d.text;
+                    })
+                    .on("click", function(d) {
+                    d3.select('#word-cloud').selectAll("text").style("fill", function (d,i) {
+                        if (d.price < 41)
+                            return "#00b300";
+                        else
+                            return "#bfbfbf";
+
+                    });
+                    d3.select(this).style("fill", function (d,i) {
+                        if (d.price < 41)
+                            return "#004d00";
+                        else
+                            return "#595959";
+
+                    });
+										//.style("fill", 'none')
+										//.style("stroke","black").style("font-size",function(d)
+                    //{
+                    //    return d.size *2 + "px";
+                    //});        //if you point at a country name, it becomes yellow!!
+    //alert(d.text);
+    //seg=Math.floor(Math.random() * 10) ;
+		seg=countryDict[d.text];
+		//alert(seg)
+    var arcFinal = d3.svg.arc().innerRadius(function(d, i) {
+
+    //if(d.ring == 0 & i == seg){
+    //return 20 + d.ring  * segmentHeight;
+    //}else{
+                return 45 + d.ring  * segmentHeight;
+    //            }
+            }).outerRadius(function(d, i) {
+
+							//if(d.ring == 5 & i == seg){
+							//	alert('yo');
+					    //return 80 + segmentHeight + d.ring * segmentHeight;
+					    //}else{
+					                return 45 + segmentHeight + d.ring * segmentHeight;
+					    //            }
+
+
+
+            }).startAngle(function(d, i) {
+							if( i == seg){
+								return (i + .1) * 2 * Math.PI / numSegments;
+							}else{
+								//alert(i * 2 * Math.PI / numSegments)
+                return i * 2 * Math.PI / numSegments;
+							}
+            }).endAngle(function(d, i) {
+							if( i == seg){
+								return (i + .90 ) * 2 * Math.PI / numSegments;
+							}else{
+								//alert(i * 2 * Math.PI / numSegments)
+                return (i + 1) * 2 * Math.PI / numSegments;
+							}
+
+            });
+
+     d3.selectAll(".ring").selectAll("path").transition()
+	      .duration(750).attr("d", arcFinal);
+
+
+	  drawLineChart(d.text);
+		countryFromWc=d.text;
+    drawAgain(d.text);
+
+
+  });
+
+/*
+  .on("mouseout", function(d) {
+
+
+    //alert(d.text);
+    d3.select('#word-cloud').selectAll("text")
+		//.style("font-size",function(d)
+    //{
+    //    return d.size + "px";
+    //})
+		.style("fill", function (d,i) {
+        if (d.price < 41)
+            return "lightgreen";
+        else
+            return "lightblue";
+
+    });
+    var arcFinal = d3.svg.arc().innerRadius(function(d, i) {
+
+                return 50 + d.ring  * segmentHeight;
+
+            }).outerRadius(function(d, i) {
+
+    //if(d.ring == 0 && i == 0){
+    //return 80 + segmentHeight + d.ring * segmentHeight;
+    //}else{
+                return 50 + segmentHeight + d.ring * segmentHeight;
+                //}
+
+
+            }).startAngle(function(d, i) {
+                return i * 2 * Math.PI / numSegments;
+            }).endAngle(function(d, i) {
+                return (i + 1) * 2 * Math.PI / numSegments;
+            });
+
+     d3.selectAll(".ring").selectAll("path").transition()
+	      .duration(750).attr("d", arcFinal);
+
+      //  d3.select(".chart").select("svg").remove();
+	  //drawLineChart();
+
+
+
+  });*/
+            }
+        }
+
+
+
+//end wordcloud
+
+	   //draw dropdown
+		 /*
+var select = document.getElementById("selectNumber");
+var options =countryList;
+//alert(options)
+while (select.hasChildNodes()) {
+    select.removeChild(select.firstChild);
+}
+var el = document.createElement("option");
+    el.textContent = 'Choose a country';
+    el.value = 'Choose a country';
+    select.appendChild(el);
+for(var i = 0; i < options.length; i++) {
+    var opt = options[i];
+    //alert(opt);
+    if(opt != 'N/A'){
+    var el = document.createElement("option");
+    el.textContent = opt;
+    el.value = opt;
+    select.appendChild(el);
+    }
+}
+//end of dropdown
+d3.selectAll('#selectNumber').on('change', function(){
+
+        //alert(this.options[this.selectedIndex].value);
+        //redraw calendar
+	    renderCalendar(this.options[this.selectedIndex].value);
+	    });
+			*/
+//calendar
+//renderCalendar('Cuba');
+    });
+	}
+
+  // *****************************************
+  // render chart
+  // *****************************************
+/*
+  function renderCalendar(country) {
+  //alert(country);
+      'use strict';
+
+      var nestedData;
+      var parseDate = d3.time.format('%Y-%m-%d').parse;
+
+      // create chart
+      var heatChart = d3.eesur.heatmap()
+          .colourRangeStart('#FDBB30')
+          .colourRangeEnd('#EE3124')
+          .height(800)
+          .startYear('2011')
+          .endYear('2012')
+          .on('_hover', function (d, i) {
+              var f = d3.time.format('%B %d');
+              d3.select('#info')
+                  .text(function () {
+                      return 'Date: ' + f(d) + ' | Price: ' + nestedData[d]+ ' CAD';
+                  });
+          });
+function filterJSON(json, country) {
+    var result = [];
+    for (var indicator in json) {
+        if (json[indicator]['country'] == country) {
+            result.push(json[indicator]);
+        }
+    }
+    return result;
+}
+      // apply after nesting data
+      d3.json('heatmap_data.json', function(error, data) {
+
+          if (error) return console.warn(error);
+          var filtered = filterJSON(data, country);
+
+          nestedData = d3.nest()
+              .key(function (d) { return parseDate(d.date.split(' ')[0]); })
+              .rollup(function (n) {
+                  return d3.sum(n, function (d) {
+                      return d.amount; // key
+                  });
+              })
+              .map(filtered);
+
+          // console.log(nestedData);
+d3.select('#heatmap').select("svg").remove();
+          // render chart
+          d3.select('#heatmap')
+              .datum(nestedData)
+              .call(heatChart);
+
+      });
+
+  }
+*/
+
+
+//  d3.select(self.frameElement).style('height', '900px');
+
+
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,234 @@
+@import url(http://fonts.googleapis.com/css?family=Source+Code+Pro:400,600);
+body {
+    font-family: "Source Code Pro", Consolas, monaco, monospace;
+    line-height: 1.5;
+  font-weight: 400;
+}
+.day {
+  fill: #fff;
+  stroke: black;
+  stroke-width: .5px;
+}
+.month {
+  fill: none;
+  stroke: white;
+  stroke-width: 1px;
+}
+.year-title {
+  font-size: 18px;
+  letter-spacing: 10px;
+  fill: #00B0DD;
+}
+#info {
+  position: absolute;
+  top: 1050px;
+  left: 40px;
+  font-size: 13px;
+}
+header {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 33px;
+  width: 100%;
+  background: #ffff00;
+  opacity: 0.9;
+  z-index: 22;
+  background: #00B0DD;
+  color: white;
+}
+#heatmap {
+position: absolute;
+     top:1080px;
+	left:10px;
+
+}
+#selectNumber {
+position: absolute;
+     top:1010px;
+	left:10px;
+
+}
+#chartholder {
+  background: url(square-white.jpg);
+	position: absolute;
+	top:100px;
+	left:410px;
+
+}
+#container1{
+  background: url(square-white.jpg);
+  position: absolute;
+  top:100px;
+	left:850px;
+  /*width: 35%;*/
+  max-height: 357px;
+}
+#charts {
+  /*position: relative;
+  background: url(square-white.jpg);
+  top:500px;
+	left:30px;
+  width:700px;*/
+
+}
+.chart {
+  background: url(square-white.jpg);
+	position: absolute;
+	top:500px;
+	left:10px;
+
+}
+
+#word-cloud {
+  background: url(square-white.jpg);
+  /*background-size: auto;
+  background-repeat: no-repeat;*/
+	position: absolute;
+	top:100px;
+	left:10px;
+
+}
+#head {
+	position: absolute;
+	top:1px;
+	left:500px;
+
+}
+#step1 {
+	position: absolute;
+	top:40px;
+	left:10px;
+
+}
+#step2 {
+	position: absolute;
+	top:40px;
+	left:500px;
+
+}
+
+#step3 {
+	position: absolute;
+	top:470px;
+	left:10px;
+
+}
+#interest {
+	position: absolute;
+	top:60px;
+	left:10px;
+}
+
+/*crossfilter*/
+.chart1 {
+
+  /*display: inline-block;*/
+  height: 161px;
+  /*margin-bottom: 20px;*/
+}
+
+.reset {
+  padding-left: 1em;
+  font-size: smaller;
+  color: #ccc;
+}
+
+.background.bar {
+  fill: #ccc;
+}
+
+.foreground.bar {
+  fill: steelblue;
+}
+
+.axis path, .axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.axis text {
+  font: 10px sans-serif;
+}
+
+.brush rect.extent {
+  fill: steelblue;
+  fill-opacity: .125;
+}
+
+.brush .resize path {
+  fill: #eee;
+  stroke: #666;
+}
+#legend-line-chart {
+	position: absolute;
+	top:650px;
+	left:1000px;
+z-index: 999;
+}
+#step4 {
+	position: absolute;
+	top:770px;
+	left:10px;
+
+}
+#hour-chart {
+  background: url(square-white.jpg);
+  width: 260px;
+  position: absolute;
+  top:810px;
+  left:10px;
+}
+
+#price-chart {
+  background: url(square-white.jpg);
+  width: 420px;
+  position: absolute;
+  top:810px;
+  left:260px;
+}
+
+#stops-chart {
+  background: url(square-white.jpg);
+  width: 70px;
+  position: absolute;
+  top:810px;
+  left:670px;
+}
+
+#date-chart {
+  background: url(square-white.jpg);
+  width: 730px;
+  position: absolute;
+  top:965px;
+  left:10px;
+}
+#stackChart {
+ background: url(square-white.jpg);
+  position: absolute;
+  top:810px;
+  left:750px;
+}
+#form {
+
+  position: absolute;
+  top:780px;
+  left:750px;
+  z-index: 999;
+}
+#totals {
+
+  position: absolute;
+  top:810px;
+  left:1080px;
+  z-index: 999;
+}
+
+aside {
+  position: absolute;
+  left: 740px;
+  /*font-size: smaller;*/
+  width: 220px;
+
+}
